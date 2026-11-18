@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123c35"><title>Food Macro Tracker</title><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6f4;color:#17231f;font-family:system-ui,-apple-system,sans-serif}header{background:#123c35;color:white;padding:20px 16px}header h1{margin:0;font-size:22px}header p{margin:5px 0 0;color:#d5e6df}main{max-width:760px;margin:auto;padding:12px}.card{background:white;border:1px solid #dfe8e2;border-radius:15px;padding:15px;margin:12px 0}h2{font-size:17px;margin:0 0 12px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.stat{background:#eaf4ef;padding:12px;border-radius:11px}.stat b{display:block;color:#176b52;font-size:22px}.muted{font-size:12px;color:#687870}label{display:block;font-weight:650;font-size:14px;margin:10px 0 5px}input,select,button{width:100%;padding:11px;border:1px solid #ccd8d1;border-radius:10px;background:white;font:inherit;min-height:44px}button{background:#176b52;color:white;border:0;font-weight:700;cursor:pointer}.secondary{background:#e8efeb;color:#234238}.danger{width:auto;background:#fff0ef;color:#a33b35;padding:7px 10px;min-height:34px}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.entry{display:flex;justify-content:space-between;gap:8px;align-items:center;border-top:1px solid #e2e9e5;padding:10px 0}.entry small{display:block;color:#687870}.bar{height:6px;background:#e6eee9;border-radius:10px;margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:#258263}.note{background:#fff8e8;padding:10px;border-radius:9px;color:#6c592d;font-size:12px}
+</style></head><body>
+<header><h1>🥗 Food & Macro Tracker</h1><p>প্রতিদিনের খাবার, ক্যালরি, প্রোটিন, ফ্যাট, কার্ব ও পানি</p></header><main>
+<section class="card"><h2>আজকের মোট হিসাব</h2><div class="stats">
+<div class="stat"><b id="k">0</b>ক্যালরি kcal<div class="bar"><i id="bk"></i></div><small id="gk" class="muted"></small></div>
+<div class="stat"><b id="p">0 g</b>প্রোটিন<div class="bar"><i id="bp"></i></div><small id="gp" class="muted"></small></div>
+<div class="stat"><b id="f">0 g</b>ফ্যাট<div class="bar"><i id="bf"></i></div><small id="gf" class="muted"></small></div>
+<div class="stat"><b id="c">0 g</b>কার্বোহাইড্রেট<div class="bar"><i id="bc"></i></div><small id="gc" class="muted"></small></div>
+</div><label>তারিখ</label><input id="date" type="date"><p id="remaining" class="muted"></p><button id="goal" class="secondary" type="button">দৈনিক লক্ষ্য পরিবর্তন</button></section>
+<section class="card"><h2>খাবার যোগ করুন</h2><label>খাবার নির্বাচন</label><select id="food"></select><div class="row"><div><label>পরিমাণ</label><input id="amount" type="number" min="0" step="any" value="100" inputmode="decimal"></div><div><label>একক</label><select id="unit"></select></div></div><p id="preview" class="muted"></p><label>খাবারের সময়</label><select id="meal"><option>জিমের আগে</option><option>জিমের পরে / প্রধান খাবার</option><option>মাঝের খাবার</option><option>ডিউটির সময়</option><option>ঘুমের আগে</option><option>অন্যান্য</option></select><button id="add" type="button">＋ খাবার যোগ করুন</button></section>
+<section class="card"><h2>পানি পান করার হিসাব</h2><div class="stats"><div class="stat"><b id="waterTotal">0 ml</b>আজ মোট পানি</div><div class="stat"><b id="waterLeft">2500 ml</b>লক্ষ্য থেকে বাকি</div></div><label>পানির পরিমাণ (ml)</label><div class="row"><input id="waterAmount" type="number" min="1" step="any" value="250" inputmode="decimal"><button id="addWater" type="button">＋ পানি যোগ করুন</button></div><p class="muted">প্রাথমিক লক্ষ্য ২৫০০ ml; ঘাম, আবহাওয়া, খাবার ও চিকিৎসকের পরামর্শ অনুযায়ী প্রয়োজন বদলাতে পারে।</p><div id="waterList"></div></section>
+<section class="card"><h2>আজকের খাবারের তালিকা</h2><div id="foodList" class="muted">এখনো খাবার যোগ করা হয়নি।</div><button id="clearFood" class="secondary" type="button">আজকের খাবারের হিসাব মুছুন</button></section>
+<section class="card"><h2>নিজের খাবার যোগ করুন</h2>
+<p class="muted">প্যাকেটের লেবেল বা নির্ভরযোগ্য পুষ্টি-তথ্য থেকে প্রতি ১০০ গ্রাম/১০০ ml-এর মান লিখুন।</p>
+<label>খাবারের নাম</label><input id="customName" type="text" placeholder="যেমন: আজওয়া খেজুর">
+<div class="row"><div><label>ক্যালরি / ১০০ g</label><input id="customK" type="number" min="0" step="any" placeholder="282"></div><div><label>প্রোটিন g / ১০০ g</label><input id="customP" type="number" min="0" step="any" placeholder="2.5"></div></div>
+<div class="row"><div><label>ফ্যাট g / ১০০ g</label><input id="customF" type="number" min="0" step="any" placeholder="0.4"></div><div><label>কার্ব g / ১০০ g</label><input id="customC" type="number" min="0" step="any" placeholder="75"></div></div>
+<button id="saveCustom" type="button">নিজের খাবার সংরক্ষণ করুন</button><div id="customList" class="muted"></div></section>
+<section class="card"><h2>ডাটা ব্যাকআপ ও রিস্টোর</h2><p class="muted">আপনার খাবার, পানি ও লক্ষ্য আলাদা JSON ফাইলে ব্যাকআপ রাখতে পারবেন। ফোন বদলালে বা ব্রাউজারের ডাটা মুছে গেলে ব্যাকআপ ফাইল দিয়ে ফিরিয়ে আনুন।</p><button id="backup" type="button">ডাটা ব্যাকআপ ডাউনলোড</button><label>ব্যাকআপ ফাইল থেকে ফিরিয়ে আনুন</label><input id="restore" type="file" accept="application/json,.json"><p class="muted">রিস্টোর করলে এই ব্রাউজারের বর্তমান খাবার/পানির লগ ব্যাকআপের ডাটা দিয়ে প্রতিস্থাপিত হবে।</p></section><section class="card"><h2>খাবারের ডাটাবেস সম্পর্কে</h2><p class="note">পুষ্টিমান আনুমানিক এবং প্রতি ১০০ গ্রাম edible অংশের হিসাবে। রান্না করা মাছ, চিকেন, চিংড়ি, ভাত ও ডাল রান্না করা ওজনে লিখবেন। ফলের ক্ষেত্রে খোসা/বীজ বাদ দিয়ে খাওয়ার অংশের ওজন দিন। প্যাকেটের লেবেল থাকলে সেটি বেশি নির্ভরযোগ্য।</p></section>
+</main>
+<script>
+'use strict';
+const foods=[
+{id:'fish',n:'মাছ (সাধারণ, রান্না করা)',k:130,p:24,f:4,c:0,serving:100},
+{id:'chicken',n:'চিকেন ব্রেস্ট (চামড়া ছাড়া, রান্না করা)',k:165,p:31,f:3.6,c:0,serving:100},
+{id:'egg',n:'সিদ্ধ ডিম কুসুমসহ',k:155,p:12.6,f:10.6,c:1.1,serving:50,servingName:'১টি মাঝারি ডিম'},
+{id:'white',n:'সিদ্ধ ডিমের সাদা অংশ',k:52,p:10.9,f:.2,c:.7,serving:33,servingName:'১টি সাদা অংশ'},
+{id:'shrimp',n:'চিংড়ি (খোসা ছাড়া, রান্না করা)',k:100,p:24,f:.5,c:.2,serving:100},
+{id:'dal',n:'মসুর ডাল (সিদ্ধ/রান্না করা, ঘন, তেল ছাড়া)',k:116,p:9,f:.4,c:20.1,serving:100},
+{id:'lowmilk',n:'লো-ফ্যাট দুধ',k:45,p:3.4,f:1.5,c:5,serving:250,servingName:'২৫০ ml'},
+{id:'fullmilk',n:'ফুল-ফ্যাট দুধ',k:61,p:3.2,f:3.3,c:4.8,serving:250,servingName:'২৫০ ml'},
+{id:'rice',n:'সাদা ভাত (রান্না করা)',k:130,p:2.7,f:.3,c:28.2,serving:100},
+{id:'banana',n:'কলা (খাওয়ার অংশ)',k:89,p:1.1,f:.3,c:22.8,serving:118,servingName:'১টি মাঝারি কলা'},
+{id:'greenapple',n:'সবুজ আপেল (খাওয়ার অংশ)',k:52,p:.3,f:.2,c:13.8,serving:182,servingName:'১টি মাঝারি আপেল'},
+{id:'redapple',n:'লাল আপেল (খাওয়ার অংশ)',k:52,p:.3,f:.2,c:13.8,serving:182,servingName:'১টি মাঝারি আপেল'},
+{id:'coffee',n:'ব্ল্যাক কফি, চিনি ছাড়া',k:.8,p:.1,f:0,c:0,serving:240,servingName:'১ কাপ (২৪০ ml)'},
+{id:'bread',n:'ব্রাউন/ব্র্যান রুটি',k:250,p:11.7,f:4,c:43.3,serving:30,servingName:'১ স্লাইস (৩০ g)'},
+{id:'peanut',n:'চিনা বাদাম (শুকনা/ভাজা, লবণ ছাড়া)',k:587,p:24.4,f:49.7,c:21.3,serving:100},
+{id:'cashew',n:'কাজু (কাঁচা/শুকনা, লবণ ছাড়া)',k:553,p:18.2,f:43.9,c:30.2,serving:100},
+{id:'pumpkin',n:'Pumpkin seeds (শাঁস, শুকনা)',k:559,p:30.2,f:49.1,c:10.7,serving:100},
+{id:'almond',n:'কাঠবাদাম / Almond',k:579,p:21.2,f:49.9,c:21.6,serving:100},
+{id:'pistachio',n:'পেস্তা / Pistachio (শাঁস)',k:560,p:20.2,f:45.3,c:27.2,serving:100},
+{id:'dates',n:'খেজুর (সাধারণ শুকনা, বিচি ছাড়া)',k:282,p:2.5,f:.4,c:75,serving:100},
+{id:'medjool',n:'মেডজুল খেজুর (বিচি ছাড়া)',k:277,p:1.8,f:.2,c:75,serving:100}
+];
+const $=id=>document.getElementById(id),today=()=>{let d=new Date(),off=d.getTimezoneOffset();return new Date(d.getTime()-off*60000).toISOString().slice(0,10)};
+function load(key,def){try{return JSON.parse(localStorage.getItem(key)||'null')??def}catch(e){return def}}
+let customFoods=load('macroCustomFoods',[]); let logs=load('macroLogs',[]),waterLogs=load('waterLogs',[]),goals=load('macroGoals',{k:2125,p:110,f:60,c:275}),waterGoal=2500;
+$('date').value=today();
+function allFoods(){return foods.concat(customFoods)}
+function fillFoodSelect(keep){let old=keep||$('food').value;$('food').innerHTML=allFoods().map(x=>`<option value="${x.id}">${x.n}</option>`).join('');if(allFoods().some(x=>x.id===old))$('food').value=old}
+fillFoodSelect();
+function currentFood(){return allFoods().find(x=>x.id===$('food').value)||foods[0]}
+function unitsFor(x){return [{v:'g',t:'গ্রাম (g)'},{v:'serving',t:x.servingName||'সার্ভিং'}]}
+function setUnits(){let x=currentFood();$('unit').innerHTML=unitsFor(x).map(u=>`<option value="${u.v}">${u.t}</option>`).join('');$('unit').value='g';$('amount').value=100;preview()}
+function getGrams(x,qty,unit){return unit==='serving'?qty*x.serving:qty}
+function calc(){let x=currentFood(),qty=Number($('amount').value)||0,grams=getGrams(x,qty,$('unit').value),m=grams/100;return {grams,k:x.k*m,p:x.p*m,f:x.f*m,c:x.c*m}}
+function nfmt(n){return (Math.round(n*10)/10).toString()}
+function preview(){let a=calc();$('preview').textContent=`আনুমানিক ${nfmt(a.grams)} g · ${nfmt(a.k)} kcal · প্রোটিন ${nfmt(a.p)} g · ফ্যাট ${nfmt(a.f)} g · কার্ব ${nfmt(a.c)} g`}
+function render(){let d=$('date').value,arr=logs.filter(x=>x.date===d),t={k:0,p:0,f:0,c:0};arr.forEach(x=>{t.k+=x.k;t.p+=x.p;t.f+=x.f;t.c+=x.c});
+[['k',t.k,goals.k],['p',t.p,goals.p],['f',t.f,goals.f],['c',t.c,goals.c]].forEach(([id,v,g])=>{$(id).textContent=nfmt(v)+(id==='k'?'':' g');$('g'+id).textContent='লক্ষ্য '+g+(id==='k'?' kcal':' g');$('b'+id).style.width=Math.min(100,g?100*v/g:0)+'%'});
+$('remaining').textContent=`বাকি: ${nfmt(Math.max(0,goals.k-t.k))} kcal · প্রোটিন ${nfmt(Math.max(0,goals.p-t.p))} g · ফ্যাট ${nfmt(Math.max(0,goals.f-t.f))} g · কার্ব ${nfmt(Math.max(0,goals.c-t.c))} g`;
+$('foodList').innerHTML=arr.length?arr.map(x=>`<div class="entry"><div><b>${x.name}</b><small>${x.meal} · ${nfmt(x.grams)} g (${x.qty} ${x.unit==='g'?'g':'serving'})</small><small>${nfmt(x.k)} kcal | P ${nfmt(x.p)} g | F ${nfmt(x.f)} g | C ${nfmt(x.c)} g</small></div><button class="danger" data-del-food="${x.id}">মুছুন</button></div>`).join(''):'এখনো খাবার যোগ করা হয়নি।';
+renderWater()}
+function renderWater(){let d=$('date').value,arr=waterLogs.filter(x=>x.date===d),sum=arr.reduce((a,x)=>a+x.ml,0);$('waterTotal').textContent=nfmt(sum)+' ml';$('waterLeft').textContent=nfmt(Math.max(0,waterGoal-sum))+' ml';$('waterList').innerHTML=arr.map(x=>`<div class="entry"><div>${nfmt(x.ml)} ml পানি</div><button class="danger" data-del-water="${x.id}">মুছুন</button></div>`).join('')}
+function saveLogs(){localStorage.setItem('macroLogs',JSON.stringify(logs));render()}
+function saveWater(){localStorage.setItem('waterLogs',JSON.stringify(waterLogs));renderWater()}
+$('food').addEventListener('change',setUnits);$('amount').addEventListener('input',preview);$('unit').addEventListener('change',preview);$('date').addEventListener('change',render);
+$('add').addEventListener('click',()=>{let qty=Number($('amount').value);if(!Number.isFinite(qty)||qty<=0){alert('সঠিক পরিমাণ লিখুন');return}let x=currentFood(),a=calc();logs.push({id:String(Date.now())+Math.random(),date:$('date').value,name:x.n,qty,unit:$('unit').value,grams:a.grams,meal:$('meal').value,k:a.k,p:a.p,f:a.f,c:a.c});saveLogs();});
+$('addWater').addEventListener('click',()=>{let ml=Number($('waterAmount').value);if(!Number.isFinite(ml)||ml<=0){alert('পানির পরিমাণ ml-এ লিখুন');return}waterLogs.push({id:String(Date.now())+Math.random(),date:$('date').value,ml});localStorage.setItem('waterLogs',JSON.stringify(waterLogs));renderWater();$('waterAmount').value='';});
+$('goal').addEventListener('click',()=>{let k=prompt('দৈনিক ক্যালরি লক্ষ্য (kcal)',goals.k);if(k===null)return;let p=prompt('দৈনিক প্রোটিন লক্ষ্য (g)',goals.p);if(p===null)return;let f=prompt('দৈনিক ফ্যাট লক্ষ্য (g)',goals.f);if(f===null)return;let c=prompt('দৈনিক কার্বোহাইড্রেট লক্ষ্য (g)',goals.c);if(c===null)return;goals={k:Number(k)||goals.k,p:Number(p)||goals.p,f:Number(f)||goals.f,c:Number(c)||goals.c};localStorage.setItem('macroGoals',JSON.stringify(goals));render()});
+$('foodList').addEventListener('click',e=>{let id=e.target.dataset.delFood;if(id){logs=logs.filter(x=>x.id!==id);saveLogs()}});
+$('waterList').addEventListener('click',e=>{let id=e.target.dataset.delWater;if(id){waterLogs=waterLogs.filter(x=>x.id!==id);saveWater()}});
+$('clearFood').addEventListener('click',()=>{if(confirm('এই তারিখের সব খাবারের হিসাব মুছবেন?')){logs=logs.filter(x=>x.date!==$('date').value);saveLogs()}});
+$('backup').addEventListener('click',()=>{let data={version:6,exportedAt:new Date().toISOString(),logs,waterLogs,goals,waterGoal,customFoods};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='food-macro-backup-'+$('date').value+'.json';a.click();URL.revokeObjectURL(url)});
+$('restore').addEventListener('change',async e=>{let file=e.target.files[0];if(!file)return;try{let data=JSON.parse(await file.text());if(!Array.isArray(data.logs)||!Array.isArray(data.waterLogs)||!data.goals)throw new Error('invalid');if(!confirm('ব্যাকআপের ডাটা দিয়ে বর্তমান লগ প্রতিস্থাপন করবেন?'))return;logs=data.logs;waterLogs=data.waterLogs;goals=data.goals;customFoods=Array.isArray(data.customFoods)?data.customFoods:customFoods;localStorage.setItem('macroCustomFoods',JSON.stringify(customFoods));fillFoodSelect();setUnits();renderCustom();localStorage.setItem('macroLogs',JSON.stringify(logs));localStorage.setItem('waterLogs',JSON.stringify(waterLogs));localStorage.setItem('macroGoals',JSON.stringify(goals));render();alert('ব্যাকআপ সফলভাবে ফিরিয়ে আনা হয়েছে।')}catch(err){alert('ব্যাকআপ ফাইলটি সঠিক নয়।')}e.target.value=''});
+function renderCustom(){ $('customList').innerHTML=customFoods.length?'<p>সংরক্ষিত নিজের খাবার:</p>'+customFoods.map(x=>`<div class="entry"><span>${x.n} · ${x.k} kcal, P ${x.p}g, F ${x.f}g, C ${x.c}g / 100g</span><button class="danger" data-del-custom="${x.id}">মুছুন</button></div>`).join(''):'এখনো নিজের খাবার যোগ করেননি।';}
+$('saveCustom').addEventListener('click',()=>{let n=$('customName').value.trim(),k=Number($('customK').value),p=Number($('customP').value),f=Number($('customF').value),c=Number($('customC').value);if(!n||[$('customK').value,$('customP').value,$('customF').value,$('customC').value].some(v=>v==='')||![k,p,f,c].every(v=>Number.isFinite(v)&&v>=0)){alert('খাবারের নাম এবং চারটি সঠিক পুষ্টিমান লিখুন।');return}let id='custom_'+Date.now();customFoods.push({id,n,k,p,f,c,serving:100});localStorage.setItem('macroCustomFoods',JSON.stringify(customFoods));fillFoodSelect(id);setUnits();renderCustom();$('customName').value='';['customK','customP','customF','customC'].forEach(id=>$ (id).value='');alert('নতুন খাবার সংরক্ষিত হয়েছে।')});
+$('customList').addEventListener('click',e=>{let id=e.target.dataset.delCustom;if(id){customFoods=customFoods.filter(x=>x.id!==id);localStorage.setItem('macroCustomFoods',JSON.stringify(customFoods));fillFoodSelect();setUnits();renderCustom()}});
+setUnits();render();renderCustom();
+</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
